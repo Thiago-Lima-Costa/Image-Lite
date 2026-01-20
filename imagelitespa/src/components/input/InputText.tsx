@@ -6,11 +6,12 @@ interface InputTextProps {
     placeholder?: string;
     id?: string;
     value?: string;
+    type?: string;
 }
 
-export const InputText: React.FC<InputTextProps> = ({onChange, style, placeholder, id, value} : InputTextProps) => {
+export const InputText: React.FC<InputTextProps> = ({onChange, style, placeholder, id, value, type="text"} : InputTextProps) => {
     return (
-         <input type="text" 
+         <input type={type} 
                 onChange={onChange}
                 placeholder={placeholder}
                 id={id}
