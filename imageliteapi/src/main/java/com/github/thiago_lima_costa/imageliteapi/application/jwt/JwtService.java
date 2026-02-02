@@ -2,6 +2,9 @@ package com.github.thiago_lima_costa.imageliteapi.application.jwt;
 
 import com.github.thiago_lima_costa.imageliteapi.domain.AccessToken;
 import com.github.thiago_lima_costa.imageliteapi.domain.entity.User;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,4 +51,18 @@ public class JwtService {
         return claims;
     }
 
+    public String getEmailFromToken(String tokenJwt) {
+        try {
+            JwtParser build = Jwts.parser()
+                    .verifyWith(keyGenerator.getKey())
+                    .build();
+
+            Jws<Claims> jwsClaims = build.parseSignedClaims(tokenJwt);
+            Claims cls = jwsClaims.getPayload();
+            return cls.getSubject();
+
+        } catch (Exception e) {
+            throw new InvalidTokenException(e.getMessage());
+        }
+    }
 }

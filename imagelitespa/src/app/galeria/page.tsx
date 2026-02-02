@@ -1,7 +1,7 @@
 "use client"
 
-import { Template, ImageCard, Button, InputText, useNotification } from '@/components'
-import { useImageService } from '@/resources/image/image.service'
+import { Template, ImageCard, Button, InputText, useNotification, AuthenticatedPage } from '@/components'
+import { useImageService } from '@/resources'
 import { Image } from '@/resources/image/image.resource'
 import { useState } from 'react';
 import Link from 'next/link';
@@ -15,63 +15,65 @@ export default function GaleriaPage() {
     const [extension, setExtension] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
 
-    async function searchImages(){
+    async function searchImages() {
         setLoading(true)
         const result = await useService.buscar(query, extension);
         setImages(result);
         setLoading(false);
 
-        if(!result.length){
+        if (!result.length) {
             notification.notify('No results found!', 'warning');
         }
     }
 
-    function renderImageCard(image: Image){
+    function renderImageCard(image: Image) {
         return (
-            <ImageCard 
-                key={image.url} 
-                nome={image.name} 
-                src={image.url} 
-                tamanho={image.size} 
+            <ImageCard
+                key={image.url}
+                nome={image.name}
+                src={image.url}
+                tamanho={image.size}
                 extension={image.extension}
-                dataUpload={image.uploadDate} 
+                dataUpload={image.uploadDate}
             />
         )
     }
 
-    function renderImageCards(){
+    function renderImageCards() {
         return images.map(image => renderImageCard(image));
     }
 
     return (
-        <Template loading={loading}>
-            <section className='flex flex-col items-center justify-center my-5'>
-                <div className='flex space-x-4'>
+        <AuthenticatedPage>
+            <Template loading={loading}>
+                <section className='flex flex-col items-center justify-center my-5'>
+                    <div className='flex space-x-4'>
 
-                    <InputText placeholder='Type Name or Tags' onChange={event => setQuery(event.target.value)} />
+                        <InputText placeholder='Type Name or Tags' onChange={event => setQuery(event.target.value)} />
 
-                    <select onChange={event => setExtension(event.target.value)} className='border px-4 py-2 rounded-lg text-gray-900'>
-                        <option value="">All formats</option>
-                        <option value="PNG">PNG</option>
-                        <option value="JPEG">JPEG</option>
-                        <option value="GIF">GIF</option>
-                    </select>
+                        <select onChange={event => setExtension(event.target.value)} className='border px-4 py-2 rounded-lg text-gray-900'>
+                            <option value="">All formats</option>
+                            <option value="PNG">PNG</option>
+                            <option value="JPEG">JPEG</option>
+                            <option value="GIF">GIF</option>
+                        </select>
 
-                    <Button style='bg-blue-500 hover:bg-blue-300' label='Search' onClick={searchImages}/>
+                        <Button style='bg-blue-500 hover:bg-blue-300' label='Search' onClick={searchImages} />
 
-                    <Link href="/formulario">
-                        <Button style='bg-yellow-500 hover:bg-yellow-300' label='Add New' />
-                    </Link>
-                    
+                        <Link href="/formulario">
+                            <Button style='bg-yellow-500 hover:bg-yellow-300' label='Add New' />
+                        </Link>
 
-                </div>
-            </section>
 
-            <section className='grid grid-cols-4 gap-8'>
-                {
-                    renderImageCards()
-                }
-            </section>
-        </Template>
+                    </div>
+                </section>
+
+                <section className='grid grid-cols-4 gap-8'>
+                    {
+                        renderImageCards()
+                    }
+                </section>
+            </Template>
+        </AuthenticatedPage>
     )
 }
